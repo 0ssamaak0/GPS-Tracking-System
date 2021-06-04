@@ -1,5 +1,5 @@
 # GPS-Tracking_System
-CSE 211 final project
+CSE211 Final Project
 
 Hello World ready to begin
 
