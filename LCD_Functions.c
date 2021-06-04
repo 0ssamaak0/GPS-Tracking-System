@@ -1,4 +1,10 @@
 
+// Write string on screen
+void LCD_Write(char Word[]) {
+  int i;
+  for(i=0; i<strlen(Word); i++) 
+  LCD_Data(Word[i]);
+}
 
 
 
