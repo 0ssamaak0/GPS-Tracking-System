@@ -1,4 +1,3 @@
-
 // Write string on screen
 void LCD_Write(char Word[]) {
   int i;
@@ -6,28 +5,18 @@ void LCD_Write(char Word[]) {
   LCD_Data(Word[i]);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-void LCD_delay(int milliseconds){
-    for (int i = 0; i < milliseconds; i++)
-    {
-        for (int j = 0; j < 3180; j++)
-        {
-            
-        }
-        
-    }
+// Start typing form the first line & first block
+void LCD_Home(void) {
+  LCD_Cmd(0X80);
 }
+
+// Move the cursor to the right after every writing process
+void LCD_Move_Right(void) {
+  LCD_Cmd(0x06);
+}
+
+// Move the cursor to the left after every writing process
+void LCD_Move_Left(void) {
+  LCD_Cmd(0x8);
+}
+
