@@ -6,7 +6,15 @@ void LCD_Write(char Word[]) {
   LCD_Data(Word[i]);
 }
 
-
+// Takes a line (0, 1) and a block(0, 15)
+void LCD_set_Cursor(int line, int block){
+    if(line == 0){
+        LCD_command(0X80 + block);
+    }
+    else if (line == 1){
+        LCD_command(0xC0 + block);
+    }
+}
 
 
 
