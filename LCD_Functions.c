@@ -39,7 +39,23 @@ void LCD_init(void) {
   LCD_Clear();
 }
 
- // Data Port
+void LCD_Cmd_init(void){
+  // Clock for port A
+  SYSCTL_RCGCGPIO_R |= 0X01;
+  while (!(SYSCTL_PRGPIO_R & 0X01)) {};
+
+  // Rs   -> A5
+  // Rw   -> A6
+  // E    -> A7
+  
+  // LCD Control Port intialization
+  GPIO_PORTA_DIR_R |= 0XE0;
+  GPIO_PORTA_DEN_R |= 0XE0;
+  GPIO_PORTA_AMSEL_R = 0X00;
+  GPIO_PORTA_AFSEL_R = 0X00;
+  GPIO_PORTA_PCTL_R = 0X00;
+  GPIO_PORTA_CR_R = 0X00;
+}
 void LCD_Data_init(void){
   // Clock for port B
   SYSCTL_RCGCGPIO_R |= 0X02;
