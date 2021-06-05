@@ -120,16 +120,21 @@ void LCD_Cmd(char command) {
 }
 
 /* Takes the hexacode of the data */
-void LCD_data(char data){
-    // Sets the Rs
-    GPIO_PORTA_DATA_R = 0X20;
-    // Sends the data into the data ports (B)
-    GPIO_PORTB_DATA_R = data;
+/* Start Transmitting data */
+// Write 1 char on screen
+void LCD_Data(char data) {
+  int i;
 
-    GPIO_PORTA_DATA_R |= 0X80;
-    LCD_delay(3);
-    GPIO_PORTA_DATA_R = 0X00;
+  GPIO_PORTA_DATA_R &= 0X1F; 
+  GPIO_PORTA_DATA_R |= 0X20; //  R/W=0; E=0; RS=1
 
+  // Sends the data into the data ports (B)
+  GPIO_PORTB_DATA_R = data;
+
+  // Sets and resets the enable, because the data transmission works only between the raising and the falling edge
+  GPIO_PORTA_DATA_R |= 0X80;
+  Delay(3, "ms");
+  GPIO_PORTA_DATA_R = 0X1F;
 }
 
 
