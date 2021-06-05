@@ -24,16 +24,32 @@
 #define NVIC_ST_RELOAD_R        (*((volatile uint32_t *)0xE000E014))
 #define NVIC_ST_CURRENT_R       (*((volatile uint32_t *)0xE000E018))
 
-void LCD_init(void) {
+// Timer function
+void Delay(int counts, char mode[]);
 
+void LCD_init(void) {
+  // Rs   -> A5
+  // Rw   -> A6
+  // E    -> A7
+  // Data -> (B0 - B7)
+
+  // Clock for port A & B
   SYSCTL_RCGCGPIO_R |= 0X03;
   while (!(SYSCTL_PRGPIO_R & 0X03)) {};
 
   GPIO_PORTA_DIR_R |= 0XE0;
   GPIO_PORTA_DEN_R |= 0XE0;
+  GPIO_PORTA_AMSEL_R = 0X00;
+  GPIO_PORTA_AFSEL_R = 0X00;
+  GPIO_PORTA_PCTL_R = 0X00;
+  GPIO_PORTA_CR_R = 0X00;
 
   GPIO_PORTB_DIR_R |= 0XFF;
   GPIO_PORTB_DEN_R |= 0XFF;
+  GPIO_PORTB_AMSEL_R = 0X00;
+  GPIO_PORTB_AFSEL_R = 0X00;
+  GPIO_PORTB_PCTL_R = 0X00;
+  GPIO_PORTB_CR_R = 0X00;
 
   LCD_8Bit();
   LCD_Move_Right();
@@ -41,7 +57,6 @@ void LCD_init(void) {
   LCD_Clear();
 
 }
-
 // Write string on screen
 void LCD_Write(char Word[]) {
   int i;
@@ -94,29 +109,23 @@ void LCD_set_Cursor(int line, int block){
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-void Systick_Timer(int counts, char mode[]){
-  NVIC_ST_CTRL_R = 0X00;
-  if(mode == "us"){
-    NVIC_ST_RELOAD_R = counts*(16-1);
-  }else if(mode == "ms"){
-    NVIC_ST_RELOAD_R = counts*(16000-1);
+// Initializing systick timer as a delay function
+void Delay(int counts, char mode[]){
+  int i;
+  for(i=0; i<(5*counts); i++){
+    NVIC_ST_CTRL_R = 0X00;
+    // delay for n Microseconds
+    if(mode == "us"){ 
+      NVIC_ST_RELOAD_R = (16-1);
+    // delay for n Milliseconds
+    }else if(mode == "ms"){
+      NVIC_ST_RELOAD_R = (16000-1);
+    // delay for n Seconds
+    }else if(mode == "sec"){
+      NVIC_ST_RELOAD_R = (16000000-1);
+    }
+    NVIC_ST_CURRENT_R = 0;
+    NVIC_ST_CTRL_R = 5;
+    while((NVIC_ST_CTRL_R & 0X10000) != 0X10000){}
   }
-  else if(mode == "sec"){
-    NVIC_ST_RELOAD_R = counts*(16000000-1);
-  }
-  NVIC_ST_CURRENT_R = 0;
-  NVIC_ST_CTRL_R = 5;
 }
