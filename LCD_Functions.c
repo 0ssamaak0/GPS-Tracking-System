@@ -77,6 +77,16 @@ void LCD_Move_Left(void) {
   LCD_Cmd(0x8);
 }
 
+// Show the cursor
+void LCD_Cursor_On(void) {
+  LCD_Cmd(0x0E);
+}
+
+// Hide the cursor
+void LCD_Cursor_Off(void) {
+  LCD_Cmd(0x0C);
+}
+
 
 void LCD_Cmd(char command){
   GPIO_PORTA_DATA_R = 0X00;
