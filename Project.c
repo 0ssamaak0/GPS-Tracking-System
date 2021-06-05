@@ -16,6 +16,10 @@ main(){
   GPIO_PORTA_DEN_R |= 0X10;
 }
 
+while(1){
+  dis_100m();
+}
+
 // This function will run when the total distance exceed 100m
 void dis_100m(void){
   if(int(Total_Dis) >= 100){
