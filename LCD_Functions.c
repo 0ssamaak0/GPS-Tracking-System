@@ -24,6 +24,8 @@
 #define NVIC_ST_RELOAD_R        (*((volatile uint32_t *)0xE000E014))
 #define NVIC_ST_CURRENT_R       (*((volatile uint32_t *)0xE000E018))
 
+// Timer function
+void Delay(int counts, char mode[]);
 
 void LCD_init(void) {
   // Rs   -> A5
@@ -98,29 +100,23 @@ void LCD_set_Cursor(int line, int block){
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-void Systick_Timer(int counts, char mode[]){
-  NVIC_ST_CTRL_R = 0X00;
-  if(mode == "us"){
-    NVIC_ST_RELOAD_R = counts*(16-1);
-  }else if(mode == "ms"){
-    NVIC_ST_RELOAD_R = counts*(16000-1);
+// Initializing systick timer as a delay function
+void Delay(int counts, char mode[]){
+  int i;
+  for(i=0; i<(5*counts); i++){
+    NVIC_ST_CTRL_R = 0X00;
+    // delay for n Microseconds
+    if(mode == "us"){ 
+      NVIC_ST_RELOAD_R = (16-1);
+    // delay for n Milliseconds
+    }else if(mode == "ms"){
+      NVIC_ST_RELOAD_R = (16000-1);
+    // delay for n Seconds
+    }else if(mode == "sec"){
+      NVIC_ST_RELOAD_R = (16000000-1);
+    }
+    NVIC_ST_CURRENT_R = 0;
+    NVIC_ST_CTRL_R = 5;
+    while((NVIC_ST_CTRL_R & 0X10000) != 0X10000){}
   }
-  else if(mode == "sec"){
-    NVIC_ST_RELOAD_R = counts*(16000000-1);
-  }
-  NVIC_ST_CURRENT_R = 0;
-  NVIC_ST_CTRL_R = 5;
 }
