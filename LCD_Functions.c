@@ -96,16 +96,6 @@ void LCD_Data_init(void){
   GPIO_PORTB_CR_R = 0X00;
 }
 
-void LCD_Cmd(char command) {
-  GPIO_PORTA_DATA_R &= 0X1F; // R/W=0; E=0; RS=0
-  GPIO_PORTB_DATA_R = command;
-
-  GPIO_PORTA_DATA_R |= 0X80;
-  Delay(3, "ms");
-  GPIO_PORTA_DATA_R &= 0X1F;
-  
-}
-
 // Timer control condition variables
 int Cmd_Timer_Condition;
 int Data_Timer_Condition;
