@@ -27,7 +27,7 @@
 // Timer function
 void Delay(int counts, char mode[]);
 
-v
+
 void LCD_init(void) {
   // Rs   -> A5
   // Rw   -> A6
@@ -47,6 +47,9 @@ void LCD_init(void) {
 
   GPIO_PORTB_DIR_R |= 0XFF;
   GPIO_PORTB_DEN_R |= 0XFF;
+  GPIO_PORTB_AMSEL_R = 0X00;
+  GPIO_PORTB_AFSEL_R = 0X00;
+  GPIO_PORTB_PCTL_R = 0X00;
   GPIO_PORTB_CR_R = 0X00;
 
   LCD_8Bit();
