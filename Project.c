@@ -16,10 +16,6 @@ main(){
   GPIO_PORTA_DEN_R |= 0X10;
 }
 
-while(1){
-  dis_100m();
-}
-
 // This function will run when the total distance exceed 100m
 void dis_100m(void){
   if(int(Total_Dis) >= 100){
@@ -30,3 +26,15 @@ void dis_100m(void){
 int Total_Dis_Calc(int Total_Dis){
   dis_100m();
   }
+
+
+void loop(){
+  while(1){
+        // dummy data
+    void LCD_Default_Data(void) {
+      LCD_Home();
+      LCD_Write("D="); LCD_Write(Total_Dis); LCD_Write("m"); LCD_Set_Cursor(0,7); LCD_Write(",T="); LCD_Write(Total_Time); LCD_Write("s");
+      LCD_Set_Cursor(1,0); LCD_Write("V="); LCD_Write(Current_velocity); LCD_Write("m/s"); LCD_Set_Cursor(1,7); LCD_Write(",A="); LCD_Write(Angle); LCD_Write("deg");
+    }
+  }
+}
