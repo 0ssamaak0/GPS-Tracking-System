@@ -90,14 +90,15 @@ void LCD_Cmd(char command) {
   
 }
 
-void LCD_DATA(char data){
-  int i;
+void LCD_data(char data){
+    // Sets the Rs
+    GPIO_PORTA_DATA_R = 0X20;
+    // Sends the data into the data ports (B)
+    GPIO_PORTB_DATA_R = data;
 
-  GPIO_PORTA_DATA_R = 0X20;
-  GPIO_PORTB_DATA_R = data;
-  GPIO_PORTA_DATA_R |= 0X80;
-  delay(3);
-  GPIO_PORTA_DATA_R = 0X00;
+    GPIO_PORTA_DATA_R |= 0X80;
+    LCD_delay(3);
+    GPIO_PORTA_DATA_R = 0X00;
 
 }
 
