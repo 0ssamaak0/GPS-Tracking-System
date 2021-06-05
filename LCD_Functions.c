@@ -106,6 +106,7 @@ void LCD_Cmd(char command) {
   
 }
 
+/* Takes the hexacode of the data */
 void LCD_data(char data){
     // Sets the Rs
     GPIO_PORTA_DATA_R = 0X20;
