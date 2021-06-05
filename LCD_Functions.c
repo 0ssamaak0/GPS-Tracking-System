@@ -24,6 +24,30 @@
 #define NVIC_ST_RELOAD_R        (*((volatile uint32_t *)0xE000E014))
 #define NVIC_ST_CURRENT_R       (*((volatile uint32_t *)0xE000E018))
 
+// LCD control functions
+void LCD_init();
+void LCD_Cmd_init();
+void LCD_Data_init();
+void LCD_Cmd(char command);
+void LCD_Data(char data);
+void LCD_Write(char Word[]);
+void LCD_Set_Cursor(int line, int block);
+void LCD_Clear_Block(int line, int block);
+void LCD_Clear_Blocks(int start_line, int end_line, int start_block, int end_block );
+
+// LCD basic instruction functions
+void LCD_Clear();
+void LCD_Home();
+void LCD_Move_Right();
+void LCD_Move_Left();
+void LCD_Cursor_On();
+void LCD_Cursor_Off();
+void LCD_8Bit();
+void LCD_Cursor_Blink();
+void LCD_Shift_Right();
+void LCD_Shift_Left();
+
+
 // Timer function
 void Delay(int counts, char mode[]);
 
@@ -90,10 +114,28 @@ void LCD_Write(char Word[]) {
 }
 
 
+// Clear the screen
 
 void LCD_clear(){
     LCD_command(0X01);
 }
+
+void LCD_Clear_Block(int line, int block) {
+  LCD_Set_Cursor(line, block);
+  LCD_Write(" ");
+}
+
+void LCD_Clear_Blocks(int start_line, int end_line, int start_block, int end_block ) {
+  int i, j;
+  int diff_line = abs(start_line - end_line);
+  int diff_block = abs(start_block - end_block);
+  for(i=0; i<=diff_line; i++){
+    for(j=0; j<=diff_block; j++){
+      LCD_Clear_Block(start_line+i, start_block+j);
+    }
+  }
+}
+
 
 // Takes a line (0, 1) and a block(0, 15)
 void LCD_set_Cursor(int line, int block){
@@ -129,6 +171,29 @@ void LCD_Cursor_On(void) {
 void LCD_Cursor_Off(void) {
   LCD_Cmd(0x0C);
 }
+
+// Make the cursor blinking
+void LCD_Cursor_Blink(void) {
+  LCD_Cmd(0x0F);
+}
+
+// Use D0 -> D7 as data pins
+void LCD_8Bit(void) {
+  LCD_Cmd(0x38);
+}
+
+// Shift all the displayed data to the right
+void LCD_Shift_Right(void) {
+  LCD_Cmd(0x1C);
+}
+
+// Shift all the displayed data to the left
+void LCD_Shift_Left(void) {
+  LCD_Cmd(0x1C);
+}
+
+/* End LCD internal instrctions*/
+
 
 // Initializing systick timer as a delay function
 void Delay(int counts, char mode[]){
