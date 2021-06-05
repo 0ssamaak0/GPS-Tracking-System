@@ -102,6 +102,9 @@ void LCD_Cursor_Off(void) {
   LCD_Cmd(0x0C);
 }
 
+void LCD_clear(){
+    LCD_command(0X01);
+}
 
 // Takes a line (0, 1) and a block(0, 15)
 void LCD_set_Cursor(int line, int block){
