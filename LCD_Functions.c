@@ -90,17 +90,24 @@ void LCD_Cursor_Off(void) {
 }
 
 
-void LCD_command(char command){
-    GPIO_PORTA_DATA_R = 0X00;
+void LCD_Cmd(char command) {
+  int Cmd_Timer_Condition;
+  int Data_Timer_Condition;
+  GPIO_PORTA_DATA_R = 0X00; // RS=0; R/W=0; E=0
 
-    GPIO_PORTB_DATA_R = command;
+  GPIO_PORTB_DATA_R = command;
 
-    GPIO_PORTA_DATA_R = 0X80;
-    LCD_delay(3);
-    GPIO_PORTA_DATA_R = 0X00;
+  GPIO_PORTA_DATA_R |= 0X80;
+  Cmd_Timer_Condition = 0;
+  Systick_Timer(5, "ms");
+  while(Cmd_Timer_Condition == 0){
+    if(NVIC_ST_CTRL_R & 0X10000){
+      GPIO_PORTA_DATA_R = 0X00;
+      Cmd_Timer_Condition = 1;
+    }
+  }
 
 }
-
 
 
 // Takes a line (0, 1) and a block(0, 15)
