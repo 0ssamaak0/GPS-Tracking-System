@@ -109,6 +109,22 @@ void LCD_Write(char Word[]) {
   LCD_Data(Word[i]);
 }
 
+
+
+void LCD_clear(){
+    LCD_command(0X01);
+}
+
+// Takes a line (0, 1) and a block(0, 15)
+void LCD_set_Cursor(int line, int block){
+    if(line == 0){
+        LCD_command(0X80 + block);
+    }
+    else if (line == 1){
+        LCD_command(0xC0 + block);
+    }
+}
+
 // Start typing form the first line & first block
 void LCD_Home(void) {
   LCD_Cmd(0X80);
@@ -132,20 +148,6 @@ void LCD_Cursor_On(void) {
 // Hide the cursor
 void LCD_Cursor_Off(void) {
   LCD_Cmd(0x0C);
-}
-
-void LCD_clear(){
-    LCD_command(0X01);
-}
-
-// Takes a line (0, 1) and a block(0, 15)
-void LCD_set_Cursor(int line, int block){
-    if(line == 0){
-        LCD_command(0X80 + block);
-    }
-    else if (line == 1){
-        LCD_command(0xC0 + block);
-    }
 }
 
 // Initializing systick timer as a delay function
