@@ -52,6 +52,16 @@ void LCD_init(void) {
   GPIO_PORTB_PCTL_R = 0X00;
   GPIO_PORTB_CR_R = 0X00;
 
+  void LCD_Cmd(char command) {
+  GPIO_PORTA_DATA_R &= 0X1F; // R/W=0; E=0; RS=0
+  GPIO_PORTB_DATA_R = command;
+
+  GPIO_PORTA_DATA_R |= 0X80;
+  Delay(3, "ms");
+  GPIO_PORTA_DATA_R &= 0X1F;
+  
+}
+
   LCD_8Bit();
   LCD_Move_Right();
   LCD_Cursor_Off();
@@ -90,26 +100,6 @@ void LCD_Cursor_On(void) {
 // Hide the cursor
 void LCD_Cursor_Off(void) {
   LCD_Cmd(0x0C);
-}
-
-
-void LCD_Cmd(char command) {
-  int Cmd_Timer_Condition;
-  int Data_Timer_Condition;
-  GPIO_PORTA_DATA_R = 0X00; // RS=0; R/W=0; E=0
-
-  GPIO_PORTB_DATA_R = command;
-
-  GPIO_PORTA_DATA_R |= 0X80;
-  Cmd_Timer_Condition = 0;
-  Systick_Timer(5, "ms");
-  while(Cmd_Timer_Condition == 0){
-    if(NVIC_ST_CTRL_R & 0X10000){
-      GPIO_PORTA_DATA_R = 0X00;
-      Cmd_Timer_Condition = 1;
-    }
-  }
-
 }
 
 
