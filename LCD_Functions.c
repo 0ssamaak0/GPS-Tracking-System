@@ -58,6 +58,7 @@ void LCD_init(void) {
   // E    -> A7
   // Data -> (B0 - B7)
 
+  
   // Clock for port A & B
   SYSCTL_RCGCGPIO_R |= 0X03;
   while (!(SYSCTL_PRGPIO_R & 0X03)) {};
