@@ -70,6 +70,24 @@ void LCD_Data_init(void){
   GPIO_PORTB_AFSEL_R = 0X00;
   GPIO_PORTB_PCTL_R = 0X00;
   GPIO_PORTB_CR_R = 0X00;
+
+  
+  LCD_8Bit();
+  LCD_Move_Right();
+  LCD_Cursor_Off();
+  LCD_Clear();
+
+}
+
+
+void LCD_Cmd(char command) {
+  GPIO_PORTA_DATA_R &= 0X1F; // R/W=0; E=0; RS=0
+  GPIO_PORTB_DATA_R = command;
+
+  GPIO_PORTA_DATA_R |= 0X80;
+  Delay(3, "ms");
+  GPIO_PORTA_DATA_R &= 0X1F;
+  
 }
 
 
