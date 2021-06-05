@@ -1,7 +1,7 @@
 #include "LCD_Functions.c"
 
 // Dummy Data
-int Total_Dis = 127;
-int Total_Time = 389;
-int Current_velocity = 5;
-int Angle = 258;
+char Total_Dis[] = "127";
+char Total_Time[] = "389";
+char Current_velocity[] = "5";
+char Angle[] = "258";
