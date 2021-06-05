@@ -52,36 +52,48 @@ void LCD_Shift_Left();
 void Delay(int counts, char mode[]);
 
 
-void LCD_init(void) {
+vvoid LCD_init(void) {
+  LCD_Cmd_init();
+  LCD_Data_init();
+  
+  // Necessary intializing instruction
+  LCD_8Bit();
+  LCD_Move_Right();
+  LCD_Cursor_Off();
+  LCD_Clear();
+}
+
+void LCD_Cmd_init(void){
+  // Clock for port A
+  SYSCTL_RCGCGPIO_R |= 0X01;
+  while (!(SYSCTL_PRGPIO_R & 0X01)) {};
+
   // Rs   -> A5
   // Rw   -> A6
   // E    -> A7
-  // Data -> (B0 - B7)
-
   
-  // Clock for port A & B
-  SYSCTL_RCGCGPIO_R |= 0X03;
-  while (!(SYSCTL_PRGPIO_R & 0X03)) {};
-
+  // LCD Control Port intialization
   GPIO_PORTA_DIR_R |= 0XE0;
   GPIO_PORTA_DEN_R |= 0XE0;
   GPIO_PORTA_AMSEL_R = 0X00;
   GPIO_PORTA_AFSEL_R = 0X00;
   GPIO_PORTA_PCTL_R = 0X00;
   GPIO_PORTA_CR_R = 0X00;
+}
+void LCD_Data_init(void){
+  // Clock for port B
+  SYSCTL_RCGCGPIO_R |= 0X02;
+  while (!(SYSCTL_PRGPIO_R & 0X02)) {};
 
+  // Data -> (B0 - B7)
+  
+  // LCD Data Port intialization
   GPIO_PORTB_DIR_R |= 0XFF;
   GPIO_PORTB_DEN_R |= 0XFF;
   GPIO_PORTB_AMSEL_R = 0X00;
   GPIO_PORTB_AFSEL_R = 0X00;
   GPIO_PORTB_PCTL_R = 0X00;
   GPIO_PORTB_CR_R = 0X00;
-
-  LCD_8Bit();
-  LCD_Move_Right();
-  LCD_Cursor_Off();
-  LCD_Clear();
-
 }
 
 void LCD_Cmd(char command) {
