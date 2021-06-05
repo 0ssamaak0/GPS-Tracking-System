@@ -24,21 +24,22 @@
 #define NVIC_ST_RELOAD_R        (*((volatile uint32_t *)0xE000E014))
 #define NVIC_ST_CURRENT_R       (*((volatile uint32_t *)0xE000E018))
 
-void LCD_init(){
+void LCD_init(void) {
 
-    SYSCTL_RCGCGPIO_R = 0X03;               // 0000 0011
-    while(!(SYSCTL_PRGPIO_R & 0X03)){}
+  SYSCTL_RCGCGPIO_R |= 0X03;
+  while (!(SYSCTL_PRGPIO_R & 0X03)) {};
 
-    GPIO_PORTA_DIR_R = 0XE0;                // 1110 0000 (Rs, Rw, E)
-    GPIO_PORTA_DEN_R = 0XE0;                 
-    GPIO_PORTB_DIR_R = 0XFF;                // 1111 1111
-    GPIO_PORTB_DEN_R = 0XFF;
+  GPIO_PORTA_DIR_R |= 0XE0;
+  GPIO_PORTA_DEN_R |= 0XE0;
 
-    LCD_command(0X38);
+  GPIO_PORTB_DIR_R |= 0XFF;
+  GPIO_PORTB_DEN_R |= 0XFF;
 
-    LCD_clear();
+  LCD_8Bit();
+  LCD_Move_Right();
+  LCD_Cursor_Off();
+  LCD_Clear();
 
-    LCD_command(0X02);
 }
 
 // Write string on screen
