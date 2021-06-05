@@ -106,6 +106,29 @@ void LCD_Cmd(char command) {
   
 }
 
+// Timer control condition variables
+int Cmd_Timer_Condition;
+int Data_Timer_Condition;
+
+void LCD_Cmd(char command) {
+  GPIO_PORTA_DATA_R = 0X00; // RS=0; R/W=0; E=0
+
+  // Sends the commands into the data ports (B)
+  GPIO_PORTB_DATA_R = command;
+
+  // Sets and resets the enable, because the command transmission works only between the raising and the falling edge
+  GPIO_PORTA_DATA_R |= 0X80;
+  Cmd_Timer_Condition = 0;
+  Systick_Timer(5, "ms");
+  while(Cmd_Timer_Condition == 0){
+    if(NVIC_ST_CTRL_R & 0X10000){
+      GPIO_PORTA_DATA_R = 0X00;
+      Cmd_Timer_Condition = 1;
+    }
+  }
+
+}
+
 /* Takes the hexacode of the data */
 void LCD_data(char data){
     // Sets the Rs
