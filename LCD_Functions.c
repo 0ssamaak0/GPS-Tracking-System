@@ -64,15 +64,16 @@ void LCD_Move_Left(void) {
 }
 
 
-void LCD_Cmd(char command){
-  GPIO_PORTA_DATA_R = 0X00;
-  GPIO_PORTB_DATA_R = command;
-  GPIO_PORTA_DATA_R |= 0X80;
-  delay(3);
-  GPIO_PORTA_DATA_R = 0X00;
-  
-}
+void LCD_command(char command){
+    GPIO_PORTA_DATA_R = 0X00;
 
+    GPIO_PORTB_DATA_R = command;
+
+    GPIO_PORTA_DATA_R = 0X80;
+    LCD_delay(3);
+    GPIO_PORTA_DATA_R = 0X00;
+
+}
 
 // Takes a line (0, 1) and a block(0, 15)
 void LCD_set_Cursor(int line, int block){
