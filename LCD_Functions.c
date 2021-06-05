@@ -90,6 +90,17 @@ void LCD_Cmd(char command) {
   
 }
 
+void LCD_DATA(char data){
+  int i;
+
+  GPIO_PORTA_DATA_R = 0X20;
+  GPIO_PORTB_DATA_R = data;
+  GPIO_PORTA_DATA_R |= 0X80;
+  delay(3);
+  GPIO_PORTA_DATA_R = 0X00;
+
+}
+
 
 // Write string on screen
 void LCD_Write(char Word[]) {
