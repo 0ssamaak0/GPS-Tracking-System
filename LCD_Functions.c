@@ -1,4 +1,8 @@
 #include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
 
 /* define registers memory location */
 #define SYSCTL_RCGCGPIO_R       (*((volatile uint32_t *)0x400FE608))
@@ -51,8 +55,8 @@ void LCD_Shift_Left();
 // Timer function
 void Delay(int counts, char mode[]);
 
-
-vvoid LCD_init(void) {
+/* Start initializes the ports A for commands (3 pins), B for data (8 pins)*/
+void LCD_init(void) {
   LCD_Cmd_init();
   LCD_Data_init();
   
@@ -95,35 +99,24 @@ void LCD_Data_init(void){
   GPIO_PORTB_PCTL_R = 0X00;
   GPIO_PORTB_CR_R = 0X00;
 }
+/* End initializes the ports A for commands (3 pins), B for data (8 pins)*/
 
-// Timer control condition variables
-int Cmd_Timer_Condition;
-int Data_Timer_Condition;
-
+/* Transmit commands to the LCD */
 void LCD_Cmd(char command) {
-  GPIO_PORTA_DATA_R = 0X00; // RS=0; R/W=0; E=0
-
+  GPIO_PORTA_DATA_R &= 0X1F; //  E=0; R/W=0; RS=0 
   // Sends the commands into the data ports (B)
   GPIO_PORTB_DATA_R = command;
 
   // Sets and resets the enable, because the command transmission works only between the raising and the falling edge
   GPIO_PORTA_DATA_R |= 0X80;
-  Cmd_Timer_Condition = 0;
-  Systick_Timer(5, "ms");
-  while(Cmd_Timer_Condition == 0){
-    if(NVIC_ST_CTRL_R & 0X10000){
-      GPIO_PORTA_DATA_R = 0X00;
-      Cmd_Timer_Condition = 1;
-    }
-  }
-
+  Delay(3, "ms");
+  GPIO_PORTA_DATA_R &= 0X1F;
+  
 }
 
-/* Takes the hexacode of the data */
 /* Start Transmitting data */
 // Write 1 char on screen
 void LCD_Data(char data) {
-  int i;
 
   GPIO_PORTA_DATA_R &= 0X1F; 
   GPIO_PORTA_DATA_R |= 0X20; //  R/W=0; E=0; RS=1
@@ -144,19 +137,36 @@ void LCD_Write(char Word[]) {
   for(i=0; i<strlen(Word); i++) 
   LCD_Data(Word[i]);
 }
+/* End transmitting data */
 
-
-// Clear the screen
-
-void LCD_clear(){
-    LCD_command(0X01);
+// Set the begining position of writing on screen
+// Takes a line (0, 1) and a block(0, 15)
+void LCD_Set_Cursor(int line, int block) {
+  if (line == 0 & block <= 15) {
+    LCD_Cmd(0X80 + block);
+  }
+  else if (line == 1 & block <= 15) {
+    LCD_Cmd(0xC0 + block);
+  }
+  else {
+    LCD_Cmd(0x80);
+  }
 }
+
+/* Start LCD internal instrctions*/
+// Clear the screen
+void LCD_Clear(){
+    LCD_Cmd(0X01);
+}
+
+// Clear Specific block
 
 void LCD_Clear_Block(int line, int block) {
   LCD_Set_Cursor(line, block);
   LCD_Write(" ");
 }
 
+// Clear Several blocks of screen at specific position
 void LCD_Clear_Blocks(int start_line, int end_line, int start_block, int end_block ) {
   int i, j;
   int diff_line = abs(start_line - end_line);
@@ -169,15 +179,7 @@ void LCD_Clear_Blocks(int start_line, int end_line, int start_block, int end_blo
 }
 
 
-// Takes a line (0, 1) and a block(0, 15)
-void LCD_set_Cursor(int line, int block){
-    if(line == 0){
-        LCD_command(0X80 + block);
-    }
-    else if (line == 1){
-        LCD_command(0xC0 + block);
-    }
-}
+
 
 // Start typing form the first line & first block
 void LCD_Home(void) {
@@ -221,13 +223,14 @@ void LCD_Shift_Right(void) {
 
 // Shift all the displayed data to the left
 void LCD_Shift_Left(void) {
-  LCD_Cmd(0x1C);
+  LCD_Cmd(0x18);
 }
-
 /* End LCD internal instrctions*/
 
 
 // Initializing systick timer as a delay function
+// F = 80MHZ; T = 12.5ns; Timer counts = 2^24 = 16777216
+// (12.5ns[time] X (16000000-1)[counts]) X 5 = 1[seconds]
 void Delay(int counts, char mode[]){
   int i;
   for(i=0; i<(5*counts); i++){
