@@ -1,34 +1,74 @@
 #include "LCD_Functions.c"
+#include "inc/tm4c123gh6pm.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
 
-// Dummy Data
-char Total_Dis[] = "127";
-char Total_Time[] = "0";
-char Current_velocity[] = "5";
-char Angle[] = "258";
+char GPS_Data[600];
+int Char_Position;
 
-int t_time = 0;
+double Error1 = 0.000;
+double Error2 = 0.0015;
 
-main(){
-// initialize LCD & display default data
+int Start_Uart = 0;
+
+
+char t[] = "0";
+char s[] = "0";
+
+int Repeated_Lati = 0;
+int Repeated_Long = 0;
+
+/* Collector Vars */
+String Lati_arr[3];
+int Lati_arr_cursor = 0;
+String Long_arr[3];
+int Long_arr_cursor = 0;
+String Ava_arr[1];
+
+int Calc_Active_Mode = 0;
+double Total_Dis = 0.00;
+
+double Total_Time = 0;
+
+void dis_100m(void);
+void UART1_Init(void);
+void UART1_receiver(void);
+void GPS_Data_Parser(void);
+float String_To_Float(String string);
+double StrDeg_To_FloatDec(String Deg_cord);
+double Distance_Calc(String Lati1_Str, String Long1_Str, String Lati2_Str, String Long2_Str);
+double Deg_To_Rad(double deg);
+
+
+int All_Data_Cursor = 0;
+
+int t_time;
+void setup() {
+  // initialize LCD & display default data
   LCD_init();
-  LCD_Default_Data();
+  Serial.begin(9600);
+  UART1_Init();
 
   // initialize port A pin 4 for turning on 100 distance led
-  GPIO_PORTA_DIR_R |= 0X10;
-  GPIO_PORTA_DEN_R |= 0X10;
+  
+  SYSCTL_RCGCGPIO_R |= 0x20; 
+  while (!(SYSCTL_PRGPIO_R & 0X20)) {};
+  GPIO_PORTF_DIR_R |= 0X02;
+  GPIO_PORTF_DEN_R |= 0X02;
+   
 }
 
-void loop(){
-  while(1){
-  LCD_Default_Data();
-  Delay(1,"sec");
-  t_time = atoi(Total_Time)+1;
-  itoa(t_time, Total_Time, 10);
-  
-  
-  Total_Dis_Calc(Total_Dis);
-    
+void loop() {
+
+  if(GPIO_PORTF_DATA_R == 0X01){
+    UART1_receiver();
+    Start_Uart = 1;
   }
+  
+  dis_100m();
+
 }
 
 // This function will run when the total distance exceed 100m
@@ -83,7 +123,6 @@ void UART1_receiver(void) {
       LCD_Write("Dis:"); LCD_Write(s); LCD_Write("m");
       Calc_Active_Mode = 2;
     }
-    
     if ( Calc_Active_Mode == 2 & Ava_arr[0] == "A" & Lati_arr[0].length()>=10 & Long_arr[0].length()>=10 & Lati_arr[1].length()>=10 & Long_arr[1].length()>=10) {
       Calc_Active_Mode = 0;
 
@@ -106,6 +145,10 @@ void UART1_receiver(void) {
       Serial.print("Total Distance: "); Serial.print(Total_Dis); Serial.println("m");
       Serial.println("...........");
     }
+
+    memset(GPS_Data, 0, 600);
+    All_Data_Cursor = 0;
+  }
 
   //Get the data from the GPS
   rx_data = (char) (UART1_DR_R & 0XFF); // Store GPS output for one char
@@ -217,13 +260,6 @@ void GPRMC_Data_Parser() {
   Char_Position++;
 }
   
-// claculate total distance
-int Total_Dis_Calc(char Dis[]){
-  int Total_distance;
-  dis_100m();
-
-  return Total_distance;
-  }
 
   
   float String_To_Float(String string) {
