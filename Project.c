@@ -146,6 +146,39 @@ void GPRMC_Data_Parser() {
           Serial.print("Avaliblity: "); Serial.println(Ava_arr[0]);
 
         } 
+        
+        else if (comma == 2 & GPS_Data[Char_Position] != ',' & Ava_arr[0] == "A") {
+
+
+          Lati_arr[2] = "";
+          while (GPS_Data[Char_Position] != ',') {
+            Lati_arr[2] += GPS_Data[Char_Position];
+            Char_Position++;
+          }
+          if (Lati_arr[2].length() >= 8) {
+            if (Lati_arr_cursor == 0) {
+              Lati_arr[Lati_arr_cursor] = Lati_arr[2];
+              Lati_arr_cursor++;
+            } if (Lati_arr_cursor == 1) {
+
+              Lati_arr[1] = Lati_arr[2];
+              Lati_arr_cursor++;
+              Repeated_Lati = 0;
+            } else {
+              Repeated_Lati = 1;
+            }
+            if (Lati_arr_cursor == 2 & abs(StrDeg_To_FloatDec(Lati_arr[2]) - StrDeg_To_FloatDec(Lati_arr[1])) >= Error1 & abs(StrDeg_To_FloatDec(Lati_arr[2]) - StrDeg_To_FloatDec(Lati_arr[1])) <= Error2) {
+              Lati_arr[0] = Lati_arr[1];
+              Lati_arr[1] = "";
+              Lati_arr[1] = Lati_arr[2];
+              Repeated_Lati = 0;
+            } else {
+              Repeated_Lati = 1;
+            }
+          }
+
+        }
+        
         comma++;
       } else {
         Char_Position++;
