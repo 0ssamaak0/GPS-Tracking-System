@@ -225,10 +225,86 @@ int Total_Dis_Calc(char Dis[]){
   return Total_distance;
   }
 
+  
+  float String_To_Float(String string) {
+  char arr[string.length()];
+  int string_cursor;
+  for (string_cursor = 0; string_cursor < string.length(); string_cursor++) {
+    arr[string_cursor] = string[string_cursor];
+  }
+  char* pend;
+  float Float = strtof(arr, &pend);
+  return Float;
+}
 
-// dummy data
-void LCD_Default_Data(void) {
-  LCD_Home();
-  LCD_Write("D="); LCD_Write(Total_Dis); LCD_Write("m"); LCD_Set_Cursor(0,7); LCD_Write(",T="); LCD_Write(Total_Time); LCD_Write("s");
-  LCD_Set_Cursor(1,0); LCD_Write("V="); LCD_Write(Current_velocity); LCD_Write("m/s"); LCD_Set_Cursor(1,7); LCD_Write(",A="); LCD_Write(Angle); LCD_Write("deg");
+double StrDeg_To_FloatDec(String Deg_cord) {
+  char Deg_arr[15];
+  char Min_arr[15];
+  char Sec_arr[15];
+  int i;
+  String Deg_cord_2[1];
+  if (Deg_cord[0] == '0') {
+    for (i = 1; i < Deg_cord.length(); i++) {
+      Deg_cord_2[0] += Deg_cord[i];
+    }
+    Deg_cord = Deg_cord_2[0];
+  }
+  int Cursor;
+
+  int Min_Cursor = 0;
+  int Sec_Cursor = 0;
+  for (Cursor = 0; Cursor < 11; Cursor++) {
+    if (Cursor < 2) {
+      Deg_arr[Cursor] = Deg_cord[Cursor];
+    } else if (Cursor < 4 & Cursor >= 2) {
+      Min_arr[Min_Cursor] = Deg_cord[Cursor];
+      Min_Cursor++;
+    } else if (Cursor > 4) {
+      Sec_arr[Sec_Cursor] = Deg_cord[Cursor];
+      Sec_Cursor++;
+      if (Cursor == 6) {
+        Sec_arr[Sec_Cursor] = '.';
+        Sec_Cursor++;
+      }
+    }
+  }
+
+  char* pend;
+  double Deg = strtof(Deg_arr, &pend);
+  double Min = strtof(Min_arr, &pend);
+  double Sec = strtof(Sec_arr, &pend);
+  double Dec = Deg + (Min / 60.00) + (Sec / 3600.00);
+
+  return Dec;
+}
+
+double Distance_Calc(String Lati1_Str, String Long1_Str, String Lati2_Str, String Long2_Str) {
+
+  double Lati1 = StrDeg_To_FloatDec(Lati1_Str);
+  double Long1 = StrDeg_To_FloatDec(Long1_Str);
+  double Lati2 = StrDeg_To_FloatDec(Lati2_Str);
+  double Long2 = StrDeg_To_FloatDec(Long2_Str);
+
+  /*
+    double Lati1 = 30.0654995;
+    double Long1 = 31.2053856;
+    double Lati2 = 30.0654895;
+    double Long2 = 31.2070184;
+  */
+
+  double R = 6371000; // Radius of the earth in meter
+  double Lati = Deg_To_Rad(Lati2 - Lati1);
+  double Long = Deg_To_Rad(Long2 - Long1);
+  double a =
+    sin(Lati / 2) * sin(Lati / 2) +
+    cos(Deg_To_Rad(Lati1)) * cos(Deg_To_Rad(Lati2)) *
+    sin(Long / 2) * sin(Long / 2)
+    ;
+  double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+  double d = R * c; // Distance in meter
+  return d;
+}
+
+double Deg_To_Rad(double deg) {
+  return deg * (PI / 180);
 }
