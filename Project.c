@@ -83,6 +83,29 @@ void UART1_receiver(void) {
       LCD_Write("Dis:"); LCD_Write(s); LCD_Write("m");
       Calc_Active_Mode = 2;
     }
+    
+    if ( Calc_Active_Mode == 2 & Ava_arr[0] == "A" & Lati_arr[0].length()>=10 & Long_arr[0].length()>=10 & Lati_arr[1].length()>=10 & Long_arr[1].length()>=10) {
+      Calc_Active_Mode = 0;
+
+      double Lati1 = StrDeg_To_FloatDec(Lati_arr[0]);
+      double Long1 = StrDeg_To_FloatDec(Long_arr[0]);
+      double Lati2 = StrDeg_To_FloatDec(Lati_arr[1]);
+      double Long2 = StrDeg_To_FloatDec(Long_arr[1]);
+
+      Serial.print("Lati: "); Serial.print(Lati1 * 10000000); Serial.print(" ---> "); Serial.print(Lati2 * 10000000); Serial.print(" ---> "); Serial.println(Repeated_Lati);
+      Serial.print("Long: "); Serial.print(Long1 * 10000000); Serial.print(" ---> "); Serial.print(Long2 * 10000000); Serial.print(" ---> "); Serial.println(Repeated_Long);
+
+      if (Lati1 != 0.00 & Long1 != 0.00 & Lati2 != 0.00 & Long2 != 0.00 & Repeated_Lati == 0 & Repeated_Long == 0) {
+        Total_Dis += (Distance_Calc(Lati_arr[0], Long_arr[0], Lati_arr[1], Long_arr[1])*(2.00/3.00));
+      }
+      LCD_Set_Cursor(0, 5);
+      LCD_Write("Dis:"); LCD_Write(s); LCD_Write("m");
+
+
+      Serial.println("...........");
+      Serial.print("Total Distance: "); Serial.print(Total_Dis); Serial.println("m");
+      Serial.println("...........");
+    }
 
   //Get the data from the GPS
   rx_data = (char) (UART1_DR_R & 0XFF); // Store GPS output for one char
