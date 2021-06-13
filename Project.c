@@ -37,6 +37,35 @@ void dis_100m(void){
     GPIO_PORTA_DATA_R |= 0X10; // power led on
   }
 }
+void UART1_Init(void) {
+  // Enable uart clock
+  SYSCTL_RCGCUART_R |= 0X02; //0000 0010
+
+  // Enable GPIO clock
+  SYSCTL_RCGCGPIO_R |= 0X04; //0000 0100
+  // disable the UART for configuration
+  UART1_CTL_R = 0;
+
+  //calculate the values of the division registers
+  UART1_IBRD_R = 520;
+  UART1_FBRD_R = 53;
+  UART1_CC_R = 0;
+
+  // set the configuration of the line control register
+  UART1_LCRH_R |= 0X70;
+
+  //Enable the control back again
+  UART1_CTL_R |= 0X0201;
+
+  // GPIO configuration
+
+  //enable the alternate function select
+  GPIO_PORTC_AFSEL_R |= 0X30;
+  // Choose the UART protocol
+  GPIO_PORTC_PCTL_R |= GPIO_PCTL_PC4_U1RX | GPIO_PCTL_PC5_U1TX;
+  GPIO_PORTC_DEN_R |= 0X30;
+
+}
 
 // claculate total distance
 int Total_Dis_Calc(char Dis[]){
