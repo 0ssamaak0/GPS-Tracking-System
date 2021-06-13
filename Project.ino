@@ -1,42 +1,84 @@
 #include "LCD_Functions.c"
+#include "inc/tm4c123gh6pm.h"
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
 
-// Dummy Data
-char Total_Dis[] = "127";
-char Total_Time[] = "0";
-char Current_velocity[] = "5";
-char Angle[] = "258";
+char GPS_Data[600];
+int Char_Position;
 
-int t_time = 0;
+double Error1 = 0.000;
+double Error2 = 0.0015;
 
-main(){
-// initialize LCD & display default data
+int Start_Uart = 0;
+
+
+char t[] = "0";
+char s[] = "0";
+
+int Repeated_Lati = 0;
+int Repeated_Long = 0;
+
+/* Collector Vars */
+String Lati_arr[3];
+int Lati_arr_cursor = 0;
+String Long_arr[3];
+int Long_arr_cursor = 0;
+String Ava_arr[1];
+
+int Calc_Active_Mode = 0;
+double Total_Dis = 0.00;
+
+double Total_Time = 0;
+
+void dis_100m(void);
+void UART1_Init(void);
+void UART1_receiver(void);
+void GPS_Data_Parser(void);
+float String_To_Float(String string);
+double StrDeg_To_FloatDec(String Deg_cord);
+double Distance_Calc(String Lati1_Str, String Long1_Str, String Lati2_Str, String Long2_Str);
+double Deg_To_Rad(double deg);
+
+
+int All_Data_Cursor = 0;
+
+int t_time;
+void setup() {
+  // initialize LCD & display default data
   LCD_init();
-  LCD_Default_Data();
+  Serial.begin(9600);
+  UART1_Init();
 
   // initialize port A pin 4 for turning on 100 distance led
-  GPIO_PORTA_DIR_R |= 0X10;
-  GPIO_PORTA_DEN_R |= 0X10;
+  
+  SYSCTL_RCGCGPIO_R |= 0x20; 
+  while (!(SYSCTL_PRGPIO_R & 0X20)) {};
+  GPIO_PORTF_DIR_R |= 0X02;
+  GPIO_PORTF_DEN_R |= 0X02;
+   
 }
 
-void loop(){
-  while(1){
-  LCD_Default_Data();
-  Delay(1,"sec");
-  t_time = atoi(Total_Time)+1;
-  itoa(t_time, Total_Time, 10);
-  
-  
-  Total_Dis_Calc(Total_Dis);
-    
+void loop() {
+
+  if(GPIO_PORTF_DATA_R == 0X01){
+    UART1_receiver();
+    Start_Uart = 1;
   }
+  
+  dis_100m();
+
 }
 
 // This function will run when the total distance exceed 100m
-void dis_100m(void){
-  if(atoi(Total_Dis) >= 100){
-    GPIO_PORTA_DATA_R |= 0X10; // power led on
+void dis_100m(void) {
+  if (Total_Dis >= 100) {
+    GPIO_PORTF_DATA_R = 0X02; // power on 100m led
+    Start_Uart == 0;
   }
 }
+
 void UART1_Init(void) {
   // Enable uart clock
   SYSCTL_RCGCUART_R |= 0X02; //0000 0010
@@ -66,6 +108,8 @@ void UART1_Init(void) {
   GPIO_PORTC_DEN_R |= 0X30;
 
 }
+
+
 void UART1_receiver(void) {
   char rx_data = 0; //
 
@@ -83,7 +127,6 @@ void UART1_receiver(void) {
       LCD_Write("Dis:"); LCD_Write(s); LCD_Write("m");
       Calc_Active_Mode = 2;
     }
-    
     if ( Calc_Active_Mode == 2 & Ava_arr[0] == "A" & Lati_arr[0].length()>=10 & Long_arr[0].length()>=10 & Lati_arr[1].length()>=10 & Long_arr[1].length()>=10) {
       Calc_Active_Mode = 0;
 
@@ -107,6 +150,10 @@ void UART1_receiver(void) {
       Serial.println("...........");
     }
 
+    memset(GPS_Data, 0, 600);
+    All_Data_Cursor = 0;
+  }
+
   //Get the data from the GPS
   rx_data = (char) (UART1_DR_R & 0XFF); // Store GPS output for one char
   GPS_Data[All_Data_Cursor] = rx_data; // Collect All GPS output
@@ -114,7 +161,8 @@ void UART1_receiver(void) {
   Delay(380, "us"); // To avoid some issues in parsing data
   Calc_Active_Mode = 1;
 }
-  void GPS_Data_Parser(void) {
+
+void GPS_Data_Parser(void) {
   Char_Position = 0;
   while (Char_Position != 150) {
     GPRMC_Data_Parser();
@@ -145,9 +193,7 @@ void GPRMC_Data_Parser() {
           }
           Serial.print("Avaliblity: "); Serial.println(Ava_arr[0]);
 
-        } 
-        
-        else if (comma == 2 & GPS_Data[Char_Position] != ',' & Ava_arr[0] == "A") {
+        } else if (comma == 2 & GPS_Data[Char_Position] != ',' & Ava_arr[0] == "A") {
 
 
           Lati_arr[2] = "";
@@ -178,6 +224,7 @@ void GPRMC_Data_Parser() {
           }
 
         }
+
         else if (comma == 4 & GPS_Data[Char_Position] != ',' & Ava_arr[0] == "A") {
           Long_arr[2] = "";
           while (GPS_Data[Char_Position] != ',') {
@@ -216,19 +263,87 @@ void GPRMC_Data_Parser() {
   }
   Char_Position++;
 }
-  
-// claculate total distance
-int Total_Dis_Calc(char Dis[]){
-  int Total_distance;
-  dis_100m();
 
-  return Total_distance;
+
+float String_To_Float(String string) {
+  char arr[string.length()];
+  int string_cursor;
+  for (string_cursor = 0; string_cursor < string.length(); string_cursor++) {
+    arr[string_cursor] = string[string_cursor];
+  }
+  char* pend;
+  float Float = strtof(arr, &pend);
+  return Float;
+}
+
+double StrDeg_To_FloatDec(String Deg_cord) {
+  char Deg_arr[15];
+  char Min_arr[15];
+  char Sec_arr[15];
+  int i;
+  String Deg_cord_2[1];
+  if (Deg_cord[0] == '0') {
+    for (i = 1; i < Deg_cord.length(); i++) {
+      Deg_cord_2[0] += Deg_cord[i];
+    }
+    Deg_cord = Deg_cord_2[0];
+  }
+  int Cursor;
+
+  int Min_Cursor = 0;
+  int Sec_Cursor = 0;
+  for (Cursor = 0; Cursor < 11; Cursor++) {
+    if (Cursor < 2) {
+      Deg_arr[Cursor] = Deg_cord[Cursor];
+    } else if (Cursor < 4 & Cursor >= 2) {
+      Min_arr[Min_Cursor] = Deg_cord[Cursor];
+      Min_Cursor++;
+    } else if (Cursor > 4) {
+      Sec_arr[Sec_Cursor] = Deg_cord[Cursor];
+      Sec_Cursor++;
+      if (Cursor == 6) {
+        Sec_arr[Sec_Cursor] = '.';
+        Sec_Cursor++;
+      }
+    }
   }
 
+  char* pend;
+  double Deg = strtof(Deg_arr, &pend);
+  double Min = strtof(Min_arr, &pend);
+  double Sec = strtof(Sec_arr, &pend);
+  double Dec = Deg + (Min / 60.00) + (Sec / 3600.00);
 
-// dummy data
-void LCD_Default_Data(void) {
-  LCD_Home();
-  LCD_Write("D="); LCD_Write(Total_Dis); LCD_Write("m"); LCD_Set_Cursor(0,7); LCD_Write(",T="); LCD_Write(Total_Time); LCD_Write("s");
-  LCD_Set_Cursor(1,0); LCD_Write("V="); LCD_Write(Current_velocity); LCD_Write("m/s"); LCD_Set_Cursor(1,7); LCD_Write(",A="); LCD_Write(Angle); LCD_Write("deg");
+  return Dec;
+}
+
+double Distance_Calc(String Lati1_Str, String Long1_Str, String Lati2_Str, String Long2_Str) {
+
+  double Lati1 = StrDeg_To_FloatDec(Lati1_Str);
+  double Long1 = StrDeg_To_FloatDec(Long1_Str);
+  double Lati2 = StrDeg_To_FloatDec(Lati2_Str);
+  double Long2 = StrDeg_To_FloatDec(Long2_Str);
+
+  /*
+    double Lati1 = 30.0654995;
+    double Long1 = 31.2053856;
+    double Lati2 = 30.0654895;
+    double Long2 = 31.2070184;
+  */
+
+  double R = 6371000; // Radius of the earth in meter
+  double Lati = Deg_To_Rad(Lati2 - Lati1);
+  double Long = Deg_To_Rad(Long2 - Long1);
+  double a =
+    sin(Lati / 2) * sin(Lati / 2) +
+    cos(Deg_To_Rad(Lati1)) * cos(Deg_To_Rad(Lati2)) *
+    sin(Long / 2) * sin(Long / 2)
+    ;
+  double c = 2 * atan2(sqrt(a), sqrt(1 - a));
+  double d = R * c; // Distance in meter
+  return d;
+}
+
+double Deg_To_Rad(double deg) {
+  return deg * (PI / 180);
 }
