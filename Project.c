@@ -66,7 +66,32 @@ void UART1_Init(void) {
   GPIO_PORTC_DEN_R |= 0X30;
 
 }
+void UART1_receiver(void) {
+  char rx_data = 0; //
 
+  //Data parsing
+  while ((UART1_FR_R & 0X10) != 0) {
+    GPS_Data_Parser();
+    if ( Calc_Active_Mode == 1) {
+
+      itoa(Total_Time, t, 10);
+      LCD_Set_Cursor(1, 6);
+      LCD_Write("T=");
+      LCD_Write(t);
+      itoa(Total_Dis, s, 10);
+      LCD_Set_Cursor(0, 5);
+      LCD_Write("Dis:"); LCD_Write(s); LCD_Write("m");
+      Calc_Active_Mode = 2;
+    }
+
+  //Get the data from the GPS
+  rx_data = (char) (UART1_DR_R & 0XFF); // Store GPS output for one char
+  GPS_Data[All_Data_Cursor] = rx_data; // Collect All GPS output
+  All_Data_Cursor++; // Move cursor to the next char
+  Delay(380, "us"); // To avoid some issues in parsing data
+  Calc_Active_Mode = 1;
+}
+  
 // claculate total distance
 int Total_Dis_Calc(char Dis[]){
   int Total_distance;
