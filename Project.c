@@ -178,7 +178,35 @@ void GPRMC_Data_Parser() {
           }
 
         }
-        
+        else if (comma == 4 & GPS_Data[Char_Position] != ',' & Ava_arr[0] == "A") {
+          Long_arr[2] = "";
+          while (GPS_Data[Char_Position] != ',') {
+            Long_arr[2] += GPS_Data[Char_Position];
+            Char_Position++;
+          }
+          if (Long_arr[2].length() >= 8) {
+            if (Long_arr_cursor == 0) {
+              Long_arr[0] = Long_arr[2];
+              Long_arr_cursor++;
+            } if (Long_arr_cursor == 1) {
+              Long_arr[1] = Long_arr[2];
+              Long_arr_cursor++;
+              Repeated_Long = 0;
+            } else {
+              Repeated_Long = 1;
+            }
+            if (Long_arr_cursor == 2 & abs(StrDeg_To_FloatDec(Long_arr[2]) - StrDeg_To_FloatDec(Long_arr[1])) >= Error1 & abs(StrDeg_To_FloatDec(Long_arr[2]) - StrDeg_To_FloatDec(Long_arr[1])) <= Error2) {
+              Long_arr[0] = Long_arr[1];
+              Long_arr[1] = "";
+              Long_arr[1] = Long_arr[2];
+              Repeated_Long = 0;
+            }
+            else {
+              Repeated_Long = 1;
+            }
+          }
+
+        }
         comma++;
       } else {
         Char_Position++;
