@@ -114,6 +114,47 @@ void UART1_receiver(void) {
   Delay(380, "us"); // To avoid some issues in parsing data
   Calc_Active_Mode = 1;
 }
+  void GPS_Data_Parser(void) {
+  Char_Position = 0;
+  while (Char_Position != 150) {
+    GPRMC_Data_Parser();
+  }
+}
+
+// Parsing the Lati & Long form GPRMC Line
+void GPRMC_Data_Parser() {
+  // Check if we are in the line of $GPRMC or not yet
+  if (GPS_Data[Char_Position] == '$' &
+      GPS_Data[Char_Position + 1] == 'G' &
+      GPS_Data[Char_Position + 2] == 'P' &
+      GPS_Data[Char_Position + 3] == 'R' &
+      GPS_Data[Char_Position + 4] == 'M' &
+      GPS_Data[Char_Position + 5] == 'C') {
+    int comma = 0; // To determine which element we're collecting
+    while (GPS_Data[Char_Position] != '\r') { // Chick if the GPRMC line ended or not, if not continue
+      if (GPS_Data[Char_Position] == ',') { // Locate the beginning of every element
+        Char_Position++;
+
+        if (comma == 1 & GPS_Data[Char_Position] != ',') {
+          Serial.println(Total_Time);
+          Total_Time++;
+          Ava_arr[0] = "";
+          while (GPS_Data[Char_Position] != ',') {
+            Ava_arr[0] = GPS_Data[Char_Position];
+            Char_Position++;
+          }
+          Serial.print("Avaliblity: "); Serial.println(Ava_arr[0]);
+
+        } 
+        comma++;
+      } else {
+        Char_Position++;
+      }
+
+    }
+  }
+  Char_Position++;
+}
   
 // claculate total distance
 int Total_Dis_Calc(char Dis[]){
