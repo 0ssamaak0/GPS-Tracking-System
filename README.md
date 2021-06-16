@@ -8,7 +8,8 @@ LCD_Write("Final Prject");
 
 ## Overview
 
-### In this project, we used **Tiva™ C Series TM4C123G LaunchPad** in order to develop a GPS tracking system that is able to calculate the distance between two points<sup><a name="ft1">1</a></sup> depending on the starting point and the end point.
+### In this project, we used **Tiva™ C Series TM4C123G LaunchPad** in order to develop a GPS tracking system that is able to calculate the distance between two points<sup id="a1">[1](#f1)</sup> depending on the starting point and the end point.
+
 
 ## Components
 
@@ -59,6 +60,6 @@ void LCD_Clear_Blocks(int start_line, int end_line, int start_block, int end_blo
 
 
 
-[1](#myfootnote1)The calculated distance is not completely correct due to inaccuracy in the GPS module itself, we've tried our code with real coordinates, our LCD has shown 259.5m while google maps has shown 260m.
 
+<b id="f1">1</b> The calculated distance is not completely correct due to inaccuracy in the GPS module itself, we've tried our code with real coordinates, our LCD has shown 259.5m while google maps has shown 260m. [↩](#a1)
 
