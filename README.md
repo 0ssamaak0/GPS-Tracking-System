@@ -120,5 +120,5 @@ after calculation and returning the value into the **UART1_receiver**, we tried 
 
 <sup><b id="f3">3</b> In terms of design, we'd better to implement this in a separate function, and call this function from the **UART1_receiver** function. [↩](#a3)</sup>
 
-<sup><b id = "f4">4</b> We have no idea about how to calculate the distance between two points given their coordinates **Haversine Formula**, we heavily depended on this [Stack Overflow answer](https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula)[↩](#a4)</sub>
+<sup><b id = "f4">4</b> We have no idea about how to calculate the distance between two points given their coordinates which is known as **Haversine Formula**, we heavily depended on this [Stack Overflow answer](https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula)[↩](#a4)</sub>
 
