@@ -3,7 +3,7 @@
 ```C 
 LCD_Write("CSE 221 | Introduction to Embedded Systems");
 LCD_Set_Cursor(0, 0);
-LCD_Write("Final Prject");
+LCD_Write("Final Project");
 ```
 
 # Overview
@@ -128,15 +128,30 @@ This is the core function of the program, in this function we start receiving th
 we also write in the LCD in this function<sup id="a3">[3](#f3)</sup>, to synchronize between the receiving process and the displaying process.
 
 ## 3. Parsing the Data
+The main Parsing process was implemented in **GPRMC_Data_Parser** function in which we searched until we find the **GPRMC** Data and start storing it after checking its availability 
+
+we have also created two functions **String_To_Float** and
+**StrDeg_To_FloatDec** which converts the received data into a float, and from degree into decimal respectively.
+
+## 4. Distance Calculation<sup id="a4">[4](f#4)</sup>
+```C
+double Distance_Calc(string Lati1_Str, string Long1_Str, string Lati2_Str, string Long2_Str)
+```
+
+in this function, we take the starting point and the end point,  calculating the distance between them and returning it's value to the **UART1_receiver** function.
+
+after calculation and returning the value into the **UART1_receiver**, we tried the system many times, and the margin of error was comparably high, so we suggested that multiplying the result with a **correction factor** will solve this problem. The correction factor was calculated after many tries, so the error was quite predictable. 
 
 
 
 
 
 # Footnotes
-<sub><b id="f1">1</b> The calculated distance is not completely correct due to inaccuracy in the GPS module itself, we've tried our code with real coordinates, our LCD has shown 259.5m while google maps has shown 260m. [↩](#a1)</sub>
+<sup><b id="f1">1</b> The calculated distance is not completely correct due to inaccuracy in the GPS module itself, we've tried our code with real coordinates, our LCD has shown 259.5m while google maps has shown 260m. [↩](#a1)</sup>
 
-<sub><b id="f2">2</b> The implementation of many functions is nothing more than just calling another functions.[↩](#a2)</sub>
+<sup><b id="f2">2</b> The implementation of many functions is nothing more than just calling another functions. [↩](#a2)</sup>
 
-<sub><b id="f3">3</b> In terms of design, we'd better to implement this in a seperate function, and call this function from the **UART1_receiver** function.[↩](#a3)</sub>
+<sup><b id="f3">3</b> In terms of design, we'd better to implement this in a separate function, and call this function from the **UART1_receiver** function. [↩](#a3)</sup>
+
+<sup><b id = "f4">4</b> We have no idea about how to calculate the distance between two points given their coordinates, we heavily depended on [this Stack Overflow answer](https://stackoverflow.com/questions/27928/calculate-distance-between-two-latitude-longitude-points-haversine-formula)[↩](#a4)</sub>
 
