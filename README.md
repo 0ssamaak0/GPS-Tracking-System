@@ -8,7 +8,7 @@ LCD_Write("Final Prject");
 
 ## Overview
 
-### In this project, we used **Tiva™ C Series TM4C123G LaunchPad** in order to develop a GPS tracking system that is able to calculate the distance between two points<sup>1</sup> depending on the starting point and the end point.
+### In this project, we used **Tiva™ C Series TM4C123G LaunchPad** in order to develop a GPS tracking system that is able to calculate the distance between two points<sup><a name="ft1">1</a></sup> depending on the starting point and the end point.
 
 ## Components
 
@@ -23,6 +23,7 @@ LCD_Write("Final Prject");
 #### in the first step, our goal was only to display a sequence of **ASCII** characters on the LCD, with the full control of it's position.
 #### In [LCD_Functions.c](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c) we started by initializing the used pins from *PORT A* and *PORT B*
 #### we have known that the **LCD functions** will be used a lot in the project, so we needed to make the code reuseable and readable. so we followed the functional programming paradigm, so our code became nothing more than a set of functions that call each other, we can summarize as following
+
 
 ### 1. The control functions
 ```C 
@@ -57,6 +58,7 @@ void LCD_Clear_Blocks(int start_line, int end_line, int start_block, int end_blo
 
 
 
-1 The calculated distance is not completely correct due to inaccuracy in the GPS module itself, we've tried our code with real coordinates, our LCD has shown 259.5m while google maps has shown 260m.
+
+[1](#myfootnote1)The calculated distance is not completely correct due to inaccuracy in the GPS module itself, we've tried our code with real coordinates, our LCD has shown 259.5m while google maps has shown 260m.
 
 
