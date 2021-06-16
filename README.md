@@ -30,84 +30,59 @@ In [LCD_Functions.c](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/
 we have known that the **LCD functions** will be used a lot in the project, so we needed to make the code reuseable and readable. so we followed the functional programming paradigm, so our code became nothing more than a set of functions that call each other<sup id="a2">[2](#f2)</sup>, we can summarize as following
 
 
-### 1. The control functions
-```C 
-void LCD_init();
-```
-calls the initializing functions, clears the LCD and sets the cursor
-```C
-void LCD_Cmd_init();
-```
-initializes the Command ports
-```C
-void LCD_Data_init();
-```
-initializes the Data ports
-```C
-void LCD_Write(char Word[]);
-```
+### 1. The control functions 
+[LCD_init](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L59) calls the initializing functions, clears the LCD and sets the cursor
+
+[LCD_Cmd_init](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L70) initializes the Command ports
+
+[LCD_Data_init](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L87) initializes the Data ports
+
+[LCD_Write](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L135)
 Taking an array of characters that contains the word to be displayed in the LCD
-```C
-void LCD_Set_Cursor(int line, int block);
-```
-taking the row and the column, and sets the cursor in the selected position
-```C
-void LCD_Clear_Block(int line, int block);
-```
+
+[LCD_Set_Cursor](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L144) taking the row and the column, and sets the cursor in the selected position\
+
+[LCD_Clear_Block](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L164)
 clears a certain block
-```C
-void LCD_Clear_Blocks(int start_line, int end_line, int start_block, int end_block );
-```
+
+[LCD_Clear_Blocks](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L170)
 clears a group of blocks
 
 ### 2. The basic instruction functions
 
-```C
-void LCD_Clear();
-```
+
+[LCD_Clear](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L158)
 Clears the LCD
-```C
-void LCD_Home();
-```
+
+[LCD_Home](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L185)
 sets the cursor to the beginning
-```C
-void LCD_Move_Right();
-```
+
+[LCD_Move_Right](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L190)
 Moves the cursor right
-```C
-void LCD_Move_Left();
-```
+
+[LCD_Move_Left](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L195)
 Moves the cursor left
-```C
-void LCD_Cursor_On();
-```
+
+[LCD_Cursor_On](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L200)
 leaves the cursor bar on
-```C
-void LCD_Cursor_Off();
-```
+
+[LCD_Cursor_Off](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L205)
 turns off the cursor bar
-```C
-void LCD_8Bit();
-```
+
+[LCD_8Bit](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L215)
 makes the LCD mode 8 bits
-```C
-void LCD_Cursor_Blink();
-```
+
+[LCD_Cursor_Blink](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#210)
 turns on LCD blinking after typing
-```C
-void LCD_Shift_Right();
-```
+
+[LCD_Shift_Right](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#220)
 shifts current displayed characters right
-```C
-void LCD_Shift_Left();
-```
+
+[LCD_Shift_Left](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#225)
 shifts current displayed characters left
 
-### 3. The delay function
+### 3. [The delay function](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L243)
 
-```C
-void Delay(int counts, char mode[])
-```
 Instead of using meaningless delay such as looping in an empty loop, we have used the systick timer, giving us the choice from choosing between 3 modes in counting **us** for microseconds, **ms** for milliseconds, and **sec** for seconds, and of course the number of counts in the selected mode.
 
 
@@ -116,34 +91,27 @@ we have chosen to use the UART protocol in order to take the GPS data, so our wo
 
 ### 1. Preparing the UART & Receiving the GPS Data
 in this process we created to functions
-```C
-void UART1_Init(void)
-```
+
+[void UART1_Init](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/Project.ino#L94)
 which initializes the UART and the pins to be used in **PORT C**
-```C
-void UART1_receiver(void)
-```
+
+[UART1_receiver](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/Project.ino#L123)
 This is the core function of the program, in this function we start receiving the data from the GPS module, and starting passing it as a parameters to different functions.
 
-we also write in the LCD in this function<sup id="a3">[3](#f3)</sup>, to synchronize between the receiving process and the displaying process.
+we also [write in the LCD](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/Project.ino#L132) in this function<sup id="a3">[3](#f3)</sup>, to synchronize between the receiving process and the displaying process.
 
 ## 3. Parsing the Data
-The main Parsing process was implemented in **GPRMC_Data_Parser** function in which we searched until we find the **GPRMC** Data and start storing it after checking its availability 
+The main Parsing process was implemented in [GPRMC_Data_Parser](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L182) function in which we searched until we find the **GPRMC** Data and start storing it after checking its availability 
 
-we have also created two functions **String_To_Float** and
-**StrDeg_To_FloatDec** which converts the received data into a float, and from degree into decimal respectively.
+we have also created two functions [String_To_Float](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/Project.ino#L286) and [StrDeg_To_FloatDec](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/Project.ino#L298) which converts the received data into a float, and from degree into decimal respectively.
 
 ## 4. Distance Calculation<sup id="4">[4](#f4)</sup>
-```C
-double Distance_Calc(string Lati1_Str, string Long1_Str, string Lati2_Str, string Long2_Str)
-```
+
+[Distance_Calc](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/Project.ino#L341)
 
 in this function, we take the starting point and the end point,  calculating the distance between them and returning it's value to the **UART1_receiver** function.
 
 after calculation and returning the value into the **UART1_receiver**, we tried the system many times, and the margin of error was comparably high, so we suggested that multiplying the result with a **correction factor** will solve this problem. The correction factor was calculated after many tries, so the error was quite predictable. 
-
-
-
 
 
 # Footnotes
