@@ -133,7 +133,7 @@ The main Parsing process was implemented in **GPRMC_Data_Parser** function in wh
 we have also created two functions **String_To_Float** and
 **StrDeg_To_FloatDec** which converts the received data into a float, and from degree into decimal respectively.
 
-## 4. Distance Calculation<sup id="a4">[4](f#4)</sup>
+## 4. Distance Calculation<sup id="4">[4](#f4)</sup>
 ```C
 double Distance_Calc(string Lati1_Str, string Long1_Str, string Lati2_Str, string Long2_Str)
 ```
