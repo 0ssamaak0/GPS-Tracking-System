@@ -81,7 +81,7 @@ shifts current displayed characters right
 [LCD_Shift_Left](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#225)
 shifts current displayed characters left
 
-### 3. [The delay function](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L243)
+### 3. [The delay function](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L234)
 
 Instead of using meaningless delay such as looping in an empty loop, we have used the systick timer, giving us the choice from choosing between 3 modes in counting **us** for microseconds, **ms** for milliseconds, and **sec** for seconds, and of course the number of counts in the selected mode.
 
@@ -105,11 +105,10 @@ The main Parsing process was implemented in [GPRMC_Data_Parser](https://github.c
 
 we have also created two functions [String_To_Float](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/Project.ino#L286) and [StrDeg_To_FloatDec](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/Project.ino#L298) which converts the received data into a float, and from degree into decimal respectively.
 
-## 4. Distance Calculation<sup id="4">[4](#f4)</sup>
+## 4. [Distance Calculation](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/Project.ino#L341)
 
-[Distance_Calc](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/Project.ino#L341)
 
-in this function, we take the starting point and the end point,  calculating the distance between them and returning it's value to the **UART1_receiver** function.
+in this function <sup id="4">[4](#f4)</sup>, we take the starting point and the end point,  calculating the distance between them and returning it's value to the **UART1_receiver** function.
 
 after calculation and returning the value into the **UART1_receiver**, we tried the system many times, and the margin of error was comparably high, so we suggested that multiplying the result with a **correction factor** will solve this problem. The correction factor was calculated after many tries, so the error was quite predictable. 
 
