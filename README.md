@@ -2,7 +2,7 @@
 
 ```C 
 LCD_Write("CSE 211 | Introduction to Embedded Systems");
-LCD_Set_Cursor(0, 0);
+LCD_Set_Cursor(1, 0);
 LCD_Write("Final Project");
 ```
 
