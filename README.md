@@ -40,7 +40,7 @@ we have known that the **LCD functions** will be used a lot in the project, so w
 [LCD_Write](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L135)
 Taking an array of characters that contains the word to be displayed in the LCD
 
-[LCD_Set_Cursor](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L144) taking the row and the column, and sets the cursor in the selected position\
+[LCD_Set_Cursor](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L144) taking the row and the column, and sets the cursor in the selected position
 
 [LCD_Clear_Block](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L164)
 clears a certain block
