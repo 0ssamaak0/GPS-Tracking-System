@@ -72,13 +72,13 @@ turns off the cursor bar
 [LCD_8Bit](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L215)
 makes the LCD mode 8 bits
 
-[LCD_Cursor_Blink](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#210)
+[LCD_Cursor_Blink](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L210)
 turns on LCD blinking after typing
 
-[LCD_Shift_Right](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#220)
+[LCD_Shift_Right](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L220)
 shifts current displayed characters right
 
-[LCD_Shift_Left](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#225)
+[LCD_Shift_Left](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L225)
 shifts current displayed characters left
 
 ### 3. [The delay function](https://github.com/0ssamaak0/GPS-Tracking-System/blob/main/LCD_Functions.c#L234)
